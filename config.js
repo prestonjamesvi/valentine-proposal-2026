@@ -9,7 +9,7 @@ const CONFIG = {
 
     // The title that appears in the browser tab
     // You can use emojis! 💝 💖 💗 💓 💞 💕
-    pageTitle: "Will You Be My Valentine? 💝",
+    pageTitle: "Quick Question 💙",
 
     // Floating emojis that appear in the background
     // Find more emojis at: https://emojipedia.org
@@ -49,9 +49,8 @@ const CONFIG = {
 
     // Messages that appear after they say "Yes!"
     celebration: {
-        title: "Yesss, Now I'm the luckiest person in the world with the Prettiest Lady as my Valentine! 🥰🥹💙",
+        title: "Yesss, I am SO happy to have the Prettiest Lady as my Valentine! 🥰🥹💙",
         message: "Now, just a big warm hug and a huge kiss when I see you to make it official!",
-        emojis: "🎁💙😘💋"  // These will bounce around
     },
 
     // Color scheme for the website
