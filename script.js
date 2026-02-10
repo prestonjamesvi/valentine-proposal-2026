@@ -53,47 +53,78 @@ document.addEventListener('DOMContentLoaded', function() {
         currentScene = sceneNumber;
     }
     
-    // First scene interactions
+    // First scene interactions - FIXED SECRET MESSAGE
     const yesBtn1 = document.getElementById('yes-btn1');
     const noBtn1 = document.getElementById('no-btn1');
     const secretMessage = document.getElementById('secret-message');
     
     yesBtn1.addEventListener('click', () => showScene(2));
-    noBtn1.addEventListener('mouseover', () => {
-        const noBtnRect = noBtn1.getBoundingClientRect();
-        const containerRect = document.querySelector('.valentine-container').getBoundingClientRect();
-        
-        // Move button randomly
-        const maxX = containerRect.width - noBtnRect.width - 40;
-        const maxY = containerRect.height - noBtnRect.height - 40;
-        
-        const randomX = Math.random() * maxX;
-        const randomY = Math.random() * maxY;
-        
-        noBtn1.style.position = 'absolute';
-        noBtn1.style.left = `${randomX}px`;
-        noBtn1.style.top = `${randomY}px`;
-        
-        // Show secret message
+    
+    // FIX: Make "No" button move and show secret message
+    let noButtonMoved = false;
+    
+    noBtn1.addEventListener('mouseover', function() {
+        if (!noButtonMoved) {
+            moveNoButton(noBtn1);
+            noButtonMoved = true;
+        }
         secretMessage.style.opacity = '1';
     });
     
-    noBtn1.addEventListener('click', () => {
+    noBtn1.addEventListener('touchstart', function() {
+        if (!noButtonMoved) {
+            moveNoButton(noBtn1);
+            noButtonMoved = true;
+        }
+        secretMessage.style.opacity = '1';
+    });
+    
+    noBtn1.addEventListener('click', function() {
         secretMessage.style.opacity = '1';
         setTimeout(() => {
             showScene(2);
         }, 1000);
     });
     
-    // Love meter
+    function moveNoButton(button) {
+        const containerRect = document.querySelector('.valentine-container').getBoundingClientRect();
+        const buttonRect = button.getBoundingClientRect();
+        
+        // Calculate available space (keep button within container)
+        const maxX = containerRect.width - buttonRect.width - 40;
+        const maxY = containerRect.height - buttonRect.height - 40;
+        
+        // Make sure we have positive values
+        const safeMaxX = Math.max(10, maxX);
+        const safeMaxY = Math.max(10, maxY);
+        
+        // Random position within container
+        const randomX = Math.random() * safeMaxX;
+        const randomY = Math.random() * safeMaxY;
+        
+        // Apply new position
+        button.style.position = 'absolute';
+        button.style.left = `${randomX}px`;
+        button.style.top = `${randomY}px`;
+    }
+    
+    // FIXED LOVE METER - Can go beyond 100%
     const loveMeter = document.getElementById('love-meter');
     const meterFill = document.getElementById('meter-fill');
     const percentage = document.getElementById('percentage');
     const loveMessage = document.getElementById('love-message');
     
+    // Change max value to allow going "beyond"
+    loveMeter.max = 10000; // Allows up to 10000%!
+    
     loveMeter.addEventListener('input', function() {
         const value = parseInt(this.value);
-        meterFill.style.width = `${value}%`;
+        
+        // Calculate visual width (capped at 100% for display, but show higher percentage)
+        const displayWidth = Math.min(100, value); // Never show more than 100% width
+        meterFill.style.width = `${displayWidth}%`;
+        
+        // Show actual percentage (can go beyond 100%)
         percentage.textContent = `${value}%`;
         
         // Show messages based on percentage
@@ -111,9 +142,10 @@ document.addEventListener('DOMContentLoaded', function() {
     // Next button
     document.getElementById('next-btn').addEventListener('click', () => showScene(3));
     
-    // Final scene
+    // Final scene - Fix moving "No" button here too
     const yesBtn3 = document.getElementById('yes-btn3');
     const noBtn3 = document.getElementById('no-btn3');
+    let finalNoButtonMoved = false;
     
     yesBtn3.addEventListener('click', function() {
         showScene(4);
@@ -121,18 +153,23 @@ document.addEventListener('DOMContentLoaded', function() {
         startCelebration();
     });
     
+    noBtn3.addEventListener('mouseover', function() {
+        if (!finalNoButtonMoved) {
+            moveNoButton(this);
+            finalNoButtonMoved = true;
+        }
+    });
+    
+    noBtn3.addEventListener('touchstart', function() {
+        if (!finalNoButtonMoved) {
+            moveNoButton(this);
+            finalNoButtonMoved = true;
+        }
+    });
+    
     noBtn3.addEventListener('click', function() {
-        // Move "No" button in final scene too
-        const containerRect = document.querySelector('.valentine-container').getBoundingClientRect();
-        const maxX = containerRect.width - this.offsetWidth - 40;
-        const maxY = containerRect.height - this.offsetHeight - 40;
-        
-        const randomX = Math.random() * maxX;
-        const randomY = Math.random() * maxY;
-        
-        this.style.position = 'absolute';
-        this.style.left = `${randomX}px`;
-        this.style.top = `${randomY}px`;
+        // Move button again if clicked
+        moveNoButton(this);
         
         // Encourage to click Yes instead
         setTimeout(() => {
